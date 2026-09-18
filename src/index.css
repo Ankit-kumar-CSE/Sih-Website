@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    overscroll-behavior: none;
+    font-family: 'Public Sans', sans-serif;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Secure Government Login & 2FA Gateway styles */
+.tricolor-stripe {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    #ff9933 0%,
+    #ff9933 33.3%,
+    #ffffff 33.3%,
+    #ffffff 66.6%,
+    #138808 66.6%,
+    #138808 100%
+  );
+}
+
+.security-pattern {
+  background-color: #064e3b;
+  background-image: radial-gradient(rgba(253, 230, 138, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.scanner-line {
+  background: linear-gradient(
+    180deg,
+    rgba(16, 185, 129, 0) 0%,
+    rgba(16, 185, 129, 0.4) 50%,
+    rgba(16, 185, 129, 1) 100%
+  );
+}
