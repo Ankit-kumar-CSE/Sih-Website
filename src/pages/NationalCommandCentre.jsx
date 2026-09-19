@@ -219,10 +219,7 @@ export default function NationalCommandCentre() {
                 </span>
               </div>
               <div className="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-[2px]">184,230</div>
-              <div className="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant pt-space-xs">
-                <span>Avg TAT / Weighment:</span>
-                <span className="font-data-mono font-bold text-on-surface">38 min</span>
-              </div>
+              
               <div className="font-label-sm text-label-sm text-outline mt-[2px] truncate">
                 Active Tokens in Bay: 18,410
               </div>
@@ -303,46 +300,7 @@ export default function NationalCommandCentre() {
         </section>
 
         {/* High-Priority National Alert & Congestion Intelligence Ribbon */}
-        <section className="w-full mb-space-md">
-          <div className="bg-surface-container-lowest border-l-4 border-l-secondary border-t border-r border-b border-outline-variant/40 rounded-r p-space-md shadow-sm">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
-              <div className="flex items-start gap-space-md">
-                <div className="w-8 h-8 rounded bg-secondary/10 flex items-center justify-center text-secondary shrink-0 mt-0.5">
-                  <span className="material-symbols-outlined text-[20px]">warning</span>
-                </div>
-                <div className="space-y-[2px]">
-                  <div className="flex items-center gap-space-sm flex-wrap">
-                    <span className="bg-error text-on-error font-label-sm text-label-sm px-space-xs py-[0.5px] rounded uppercase font-bold">
-                      CRITICAL CAPACITY ALERT
-                    </span>
-                    <span className="font-body-md text-body-md text-on-surface font-semibold">
-                      3 centres in Sangrur & Ludhiana exceed 96% silo capacity. Automated rerouting suggested.
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-space-sm flex-wrap text-on-surface-variant font-body-sm text-body-sm">
-                    <span className="bg-secondary/10 text-secondary font-label-sm text-label-sm px-space-xs py-[0.5px] rounded font-bold">
-                      AI INFLOW FORECAST
-                    </span>
-                    <span>
-                      Predicted harvest inflow in Doaba region will surge by{' '}
-                      <strong className="text-on-surface">+28% over next 48 hrs</strong> due to early unseasonal rain
-                      forecast. Reallocation buffers activated.
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-space-sm self-end lg:self-center shrink-0">
-                <button className="bg-secondary hover:bg-secondary-fixed-dim text-on-secondary font-label-md text-label-md px-space-md py-1.5 rounded transition-colors flex items-center gap-space-xs font-semibold shadow-sm">
-                  <span className="material-symbols-outlined text-[16px]">alt_route</span>
-                  Authorize Dynamic Re-Route
-                </button>
-                <button className="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md px-space-md py-1.5 rounded border border-outline-variant/50 transition-colors font-medium">
-                  Dismiss Warning
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
+        
 
         {/* Flagship Interactive National Map Command Visualizer & Centre Inspection Drawer */}
         <section className="w-full mb-space-md">
@@ -399,12 +357,7 @@ export default function NationalCommandCentre() {
                   <span className="w-2.5 h-2.5 rounded-full bg-primary-container ml-space-xs"></span>
                   <span>Normal (&lt;75%)</span>
                 </div>
-                <button
-                  className="bg-surface-container-lowest border border-outline-variant/50 hover:bg-surface-container text-on-surface p-1 rounded transition-colors"
-                  title="Full Grid Expansion"
-                >
-                  <span className="material-symbols-outlined text-[18px]">fullscreen</span>
-                </button>
+               
               </div>
             </div>
 
