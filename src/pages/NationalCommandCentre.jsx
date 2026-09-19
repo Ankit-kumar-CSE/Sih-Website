@@ -139,25 +139,18 @@ export default function NationalCommandCentre() {
           <div className="px-gutter py-space-md flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
             <div className="flex flex-col gap-space-xs">
               <div className="flex flex-wrap items-center gap-space-sm">
-                <span className="bg-primary text-on-primary font-label-sm text-label-sm px-space-sm py-[2px] rounded uppercase tracking-wider font-bold">
-                  Apex Operational Clearance
-                </span>
+                
                 <span className="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider font-bold">
                   ROLE: NATIONAL CHIEF PROCUREMENT ADMINISTRATOR
                 </span>
-                <span className="text-outline-variant">•</span>
-                <span className="text-secondary font-label-sm text-label-sm font-semibold">
-                  Ministry of Consumer Affairs, Food & Public Distribution | Gov. of India
-                </span>
+                
+               
               </div>
               <div className="flex flex-wrap items-baseline gap-space-md">
                 <h1 className="font-headline-lg text-headline-lg text-primary tracking-tight">
                   National Procurement Operations Command Centre
                 </h1>
-                <div className="flex items-center gap-space-xs font-data-mono text-data-mono text-on-surface-variant">
-                  <span className="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
-                  <span>GRID SYNCHRONIZATION: ALL 6 ZONES ONLINE</span>
-                </div>
+                
               </div>
             </div>
             {/* Live National Ledger Summary */}
@@ -181,7 +174,7 @@ export default function NationalCommandCentre() {
               <div className="h-6 w-[1px] bg-outline-variant/50"></div>
               <div className="px-space-sm py-[2px] bg-primary-container/10 rounded">
                 <div className="font-label-sm text-label-sm uppercase text-primary-container font-bold">
-                  Procured Today (MT/Q)
+                  Procured Today 
                 </div>
                 <div className="font-headline-sm text-headline-sm text-primary font-bold">1,824,650 Q</div>
               </div>
