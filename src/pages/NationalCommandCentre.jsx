@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AppShell from '../components/AppShell'
+import { useAdminAuth } from '../store/adminAuth'
+import { adminFetch } from '../hooks/useApi'
 
 const DEFAULT_CENTRE = {
   name: 'Phagwara Mandi Centre',
@@ -113,8 +115,31 @@ const STATE_ROWS = [
 ]
 
 export default function NationalCommandCentre() {
+  const { token, apiBase } = useAdminAuth()
   const [centre, setCentre] = useState(DEFAULT_CENTRE)
   const [commodity, setCommodity] = useState(0)
+  const [kpis, setKpis] = useState(null)
+  const [kpisLoading, setKpisLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const data = await adminFetch(apiBase, token, '/api/admin/dashboard')
+        if (!cancelled && data?.kpis) setKpis(data.kpis)
+      } catch {
+        // API unavailable — static demo data already shown
+      } finally {
+        if (!cancelled) setKpisLoading(false)
+      }
+    }
+    load()
+    // Refresh every 30 seconds
+    const interval = setInterval(load, 30000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [apiBase, token])
+
+  const fmt = (n) => (n == null ? '—' : Number(n).toLocaleString('en-IN'))
 
   const highlightCentre = (name, region, intake, silo, queue, wait, intakeBar, siloBar) => {
     const match = name.match(/\((.*?)\)/)
@@ -157,26 +182,37 @@ export default function NationalCommandCentre() {
             <div className="flex flex-wrap items-center gap-space-sm bg-surface-container-low p-space-sm rounded border border-outline-variant/30">
               <div className="px-space-sm py-[2px]">
                 <div className="font-label-sm text-label-sm uppercase text-outline">Registered Centres</div>
-                <div className="font-headline-sm text-headline-sm text-primary font-bold">2,480</div>
+                <div className="font-headline-sm text-headline-sm text-primary font-bold">
+                  {kpis ? fmt(kpis.totalCentres) : '—'}
+                </div>
               </div>
               <div className="h-6 w-[1px] bg-outline-variant/50"></div>
               <div className="px-space-sm py-[2px]">
                 <div className="font-label-sm text-label-sm uppercase text-outline">Active Today</div>
                 <div className="font-headline-sm text-headline-sm text-primary-container font-bold">
-                  2,314 <span className="font-label-sm text-label-sm text-surface-tint font-normal">(93.3%)</span>
+                  {kpis ? fmt(kpis.activeCentres) : '—'}
+                  {kpis && kpis.totalCentres > 0 && (
+                    <span className="font-label-sm text-label-sm text-surface-tint font-normal">
+                      {' '}({Math.round(kpis.activeCentres / kpis.totalCentres * 100)}%)
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="h-6 w-[1px] bg-outline-variant/50"></div>
               <div className="px-space-sm py-[2px]">
                 <div className="font-label-sm text-label-sm uppercase text-outline">Registered Farmers</div>
-                <div className="font-headline-sm text-headline-sm text-on-surface font-bold">9,842,120</div>
+                <div className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                  {kpis ? fmt(kpis.totalFarmers) : '—'}
+                </div>
               </div>
               <div className="h-6 w-[1px] bg-outline-variant/50"></div>
               <div className="px-space-sm py-[2px] bg-primary-container/10 rounded">
                 <div className="font-label-sm text-label-sm uppercase text-primary-container font-bold">
-                  Procured Today 
+                  Procured Today
                 </div>
-                <div className="font-headline-sm text-headline-sm text-primary font-bold">1,824,650 Q</div>
+                <div className="font-headline-sm text-headline-sm text-primary font-bold">
+                  {kpis ? fmt(kpis.todayProcuredQ) : '—'} Q
+                </div>
               </div>
             </div>
           </div>

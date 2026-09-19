@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { EMBLEM_SRC } from '../components/AppShell'
+import { useAdminAuth } from '../store/adminAuth'
 
 const ROLE_CARDS = [
   {
@@ -37,14 +38,24 @@ const AUTH_TABS = [
 
 export default function Login() {
   const navigate = useNavigate()
+  const { login } = useAdminAuth()
   const [activeTab, setActiveTab] = useState(0)
   const [showPassword, setShowPassword] = useState(false)
-  const [trustedDevice, setTrustedDevice] = useState(true)
+  const [email, setEmail] = useState('national@kisanraw.gov.in')
+  const [password, setPassword] = useState('Admin@1234')
   const [authenticating, setAuthenticating] = useState(false)
+  const [loginError, setLoginError] = useState(null)
 
-  const handleAuthenticate = () => {
+  const handleAuthenticate = async () => {
     setAuthenticating(true)
-    setTimeout(() => navigate('/national-command'), 700)
+    setLoginError(null)
+    const result = await login(email, password)
+    if (result.success) {
+      navigate('/national-command')
+    } else {
+      setLoginError(result.error || 'Login failed. Please check your credentials.')
+      setAuthenticating(false)
+    }
   }
 
   return (
@@ -103,7 +114,8 @@ export default function Login() {
                   </span>
                   <input
                     type="text"
-                    defaultValue="swaminathan.rk@nic.gov.in"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-24 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-brand-700 transition"
                     placeholder="e.g. officer.id@gov.in"
                   />
@@ -128,7 +140,9 @@ export default function Login() {
                   </span>
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    defaultValue="••••••••••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAuthenticate()}
                     className="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-brand-700 transition"
                   />
                   <button
@@ -165,6 +179,11 @@ export default function Login() {
               
               </div>
 
+              {loginError && (
+                <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700 font-medium">
+                  {loginError}
+                </div>
+              )}
 
               {/* Primary Submit Action */}
               <div className="pt-2">

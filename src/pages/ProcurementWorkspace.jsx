@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppShell from '../components/AppShell'
+import { useAdminAuth } from '../store/adminAuth'
+import { adminFetch } from '../hooks/useApi'
 
 const FARMER_PHOTO =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDcT2PUmVHTVptWtSeIm8q0FiBn67VbiK1r73vCgLwoOJyPF9nC-ZnXz6haPSXHd7jq1enZf1NL8NNe8EOhU9rxNygkeQkDOR38Vc5c5DpU8wJ31T9GxP38d2JsOhj2XL5xPvDJe5hbTbmCM5muRjC6J3dC860_7tRsvFrryQgL5AvLM6LPUFQ0UhOw6oyqP30sampQ5oRS7qnDIHf2WQLP78DmwLhq6DAdWtcbS1_aMFXPBxC8WAWq'
@@ -68,20 +70,53 @@ const STEPS = [
 ]
 
 export default function ProcurementWorkspace() {
+  const { token, apiBase, admin } = useAdminAuth()
+  const centreId = admin?.centreId || 'KR-PHK-01'
+
   const [approving, setApproving] = useState(false)
   const [certModalOpen, setCertModalOpen] = useState(false)
+  const [activeBooking, setActiveBooking] = useState(null)
 
-  const executeProcurementApproval = () => {
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const data = await adminFetch(apiBase, token, `/api/operator/queue?centreId=${centreId}`)
+        // Find the booking currently being processed (status: processing or in-queue)
+        const processing = (data?.queue || []).find((b) =>
+          b.status === 'processing' || b.status === 'in-queue'
+        )
+        if (!cancelled) setActiveBooking(processing || null)
+      } catch {
+        // No active booking fetched — show static demo data
+      }
+    }
+    load()
+    const interval = setInterval(load, 15000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [apiBase, token, centreId])
+
+  const executeProcurementApproval = async () => {
     setApproving(true)
-    setTimeout(() => {
+    try {
+      if (activeBooking) {
+        await adminFetch(apiBase, token, '/api/operator/advance', {
+          method: 'POST',
+          body: { bookingId: activeBooking.booking_id || activeBooking.bookingId },
+        })
+      }
+      setTimeout(() => {
+        setApproving(false)
+        setCertModalOpen(true)
+      }, 600)
+    } catch {
       setApproving(false)
-      setCertModalOpen(true)
-    }, 600)
+    }
   }
 
   const nextFarmerToken = () => {
     setCertModalOpen(false)
-    window.alert('Calling Token A-104: Jaswinder Kaur (80 Q Mustard / KRN-PB-66322) to Counter 02')
+    window.alert('Calling next token to the counter.')
   }
 
   const requestSecondaryReview = () => {

@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import AppShell from '../components/AppShell'
+import { useAdminAuth } from '../store/adminAuth'
+import { adminFetch } from '../hooks/useApi'
 
 const QUEUE_ROWS = [
   {
@@ -118,11 +120,16 @@ const QUEUE_TABS = [
 ]
 
 export default function LiveQueueControl() {
+  const { token, apiBase, admin } = useAdminAuth()
+  const centreId = admin?.centreId || 'KR-PHK-01'
+
   const [modalOpen, setModalOpen] = useState(false)
   const [toast, setToast] = useState(null)
   const [nextToken, setNextToken] = useState('A-104')
   const [activeTab, setActiveTab] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [liveQueue, setLiveQueue] = useState(null)   // null = not yet loaded
+  const [callingNext, setCallingNext] = useState(false)
   const toastTimer = useRef(null)
 
   const showToast = (msg) => {
@@ -131,12 +138,39 @@ export default function LiveQueueControl() {
     toastTimer.current = setTimeout(() => setToast(null), 3500)
   }
 
-  useEffect(() => () => clearTimeout(toastTimer.current), [])
+  useEffect(() => clearTimeout(toastTimer.current), [])
 
-  const confirmDispatch = () => {
+  // Fetch queue from backend and refresh every 10 seconds
+  const loadQueue = useCallback(async () => {
+    try {
+      const data = await adminFetch(apiBase, token, `/api/operator/queue?centreId=${centreId}`)
+      if (data?.queue) setLiveQueue(data.queue)
+    } catch {
+      // Backend unavailable — show static demo rows below
+    }
+  }, [apiBase, token, centreId])
+
+  useEffect(() => {
+    loadQueue()
+    const interval = setInterval(loadQueue, 10000)
+    return () => clearInterval(interval)
+  }, [loadQueue])
+
+  const confirmDispatch = async () => {
     setModalOpen(false)
-    setNextToken('A-105')
-    showToast('A-104 (Balwinder Kaur) assigned to Counter 7. Live PA broadcast active.')
+    setCallingNext(true)
+    try {
+      await adminFetch(apiBase, token, '/api/operator/queue/next', {
+        method: 'POST',
+        body: { centreId },
+      })
+      await loadQueue()  // refresh
+      showToast(`Next token called. Queue advanced.`)
+    } catch (err) {
+      showToast('Could not call next: ' + err.message)
+    } finally {
+      setCallingNext(false)
+    }
   }
 
   const simulateAction = (actionName) => {
@@ -147,7 +181,35 @@ export default function LiveQueueControl() {
     showToast('Downloading live CSV manifest for Phagwara Mandi PB-KAP-102...')
   }
 
-  const filteredRows = QUEUE_ROWS.filter((row) => {
+  // Map live API bookings to the same shape the UI expects
+  const apiRows = liveQueue
+    ? liveQueue.map((b, i) => ({
+        token: b.token || `A-${b.token_num}`,
+        name: b.farmer_name || b.farmerName || 'Farmer',
+        fid: b.booking_id || b.bookingId || '',
+        crop: b.crop,
+        qty: `${b.quantity} Quintals`,
+        qtyCls: i === 0 ? 'text-secondary font-bold' : 'text-on-surface font-bold',
+        slot: b.slot_label || b.slotLabel || '',
+        slotNote: 'On Schedule',
+        slotNoteCls: 'text-surface-tint font-bold',
+        arrival: b.checked_in_at ? new Date(b.checked_in_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : 'Pending',
+        wait: `Wait: —`,
+        waitCls: 'text-outline',
+        counter: `Queue Pos. ${i + 1}`,
+        counterCls: i === 0 ? 'bg-secondary text-on-secondary font-bold' : 'bg-surface-container-high text-on-surface font-bold',
+        status: b.status === 'checked-in' ? 'Gate In Verified' : b.status === 'in-queue' ? 'Counter Queue' : b.status,
+        statusDot: 'bg-surface-tint',
+        statusCls: 'bg-surface-tint/10 text-surface-tint',
+        rowCls: i === 0 ? 'bg-secondary-fixed/10 hover:bg-secondary-fixed/20' : 'hover:bg-surface-container-low',
+        next: i === 0,
+      }))
+    : null
+
+  // Use API rows if available, fallback to static demo rows
+  const displayRows = apiRows || QUEUE_ROWS
+
+  const filteredRows = displayRows.filter((row) => {
     if (!searchQuery.trim()) return true
     const text = `${row.token} ${row.name} ${row.fid} ${row.crop} ${row.qty}`.toLowerCase()
     return text.includes(searchQuery.toLowerCase())

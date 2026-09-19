@@ -1,5 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import AppShell from '../components/AppShell'
+import { useAdminAuth } from '../store/adminAuth'
+import { adminFetch } from '../hooks/useApi'
 
 const FORECAST_ROWS = [
   {
@@ -141,8 +143,46 @@ const AUDIT_ROWS = [
 ]
 
 export default function SmartCongestion() {
+  const { token, apiBase } = useAdminAuth()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [executeState, setExecuteState] = useState('idle') // idle | dispatching | active
+  const [analytics, setAnalytics] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const data = await adminFetch(apiBase, token, '/api/admin/analytics')
+        if (!cancelled && data?.centreBreakdown) setAnalytics(data)
+      } catch {
+        // Use static FORECAST_ROWS as fallback
+      }
+    }
+    load()
+    const interval = setInterval(load, 30000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [apiBase, token])
+
+  // Map analytics centre breakdown to FORECAST_ROW shape for the table
+  const liveRows = analytics?.centreBreakdown?.map((c) => ({
+    name: c.centreName || c.centreId,
+    code: c.centreId,
+    cap: '—',
+    demand: `${c.bookings} bookings`,
+    demandCls: 'font-bold text-on-surface',
+    delta: `${c.procuredQ} Q procured`,
+    deltaCls: 'text-primary',
+    status: c.bookings > 30 ? 'HIGH TRAFFIC' : c.bookings > 10 ? 'MODERATE' : 'OPTIMAL',
+    statusDot: c.bookings > 30 ? 'bg-error' : c.bookings > 10 ? 'bg-secondary' : 'bg-primary',
+    statusCls: c.bookings > 30 ? 'bg-error-container text-on-error-container' : c.bookings > 10 ? 'bg-secondary-fixed text-on-secondary-fixed' : 'bg-primary-fixed text-on-primary-fixed',
+    action: 'View Details',
+    actionCls: 'text-primary',
+    rowCls: '',
+    nameCls: '',
+  }))
+
+  const forecastRows = liveRows?.length ? liveRows : FORECAST_ROWS
+
   const [toastVisible, setToastVisible] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const toastTimer = useRef(null)
@@ -487,7 +527,7 @@ export default function SmartCongestion() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-container">
-                    {FORECAST_ROWS.map((row) => (
+                    {forecastRows.map((row) => (
                       <tr key={row.code} className={`hover:bg-surface-container-low transition-colors ${row.rowCls}`}>
                         <td className="py-space-md px-space-md font-medium text-on-surface">
                           <div className={`font-headline-sm text-headline-sm font-bold ${row.nameCls}`}>
