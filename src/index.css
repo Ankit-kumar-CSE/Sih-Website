@@ -17,7 +17,7 @@
   }
 }
 
-/* Secure Government Login & 2FA Gateway styles */
+/* India Tricolor accent bar (used in login) */
 .tricolor-stripe {
   height: 4px;
   background: linear-gradient(
@@ -28,20 +28,5 @@
     #ffffff 66.6%,
     #138808 66.6%,
     #138808 100%
-  );
-}
-
-.security-pattern {
-  background-color: #064e3b;
-  background-image: radial-gradient(rgba(253, 230, 138, 0.08) 1px, transparent 0);
-  background-size: 24px 24px;
-}
-
-.scanner-line {
-  background: linear-gradient(
-    180deg,
-    rgba(16, 185, 129, 0) 0%,
-    rgba(16, 185, 129, 0.4) 50%,
-    rgba(16, 185, 129, 1) 100%
   );
 }

@@ -3,43 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { EMBLEM_SRC } from '../components/AppShell'
 import { useAdminAuth } from '../store/adminAuth'
 
-const ROLE_CARDS = [
-  {
-    icon: 'fa-solid fa-globe',
-    tile: 'bg-brand-900 text-amber-400',
-    title: 'National Admin',
-    meta: '2,480 Centres • Apex Control',
-  },
-  {
-    icon: 'fa-solid fa-map',
-    tile: 'bg-blue-800 text-blue-100',
-    title: 'Regional Admin',
-    meta: 'Zone Lockdown (e.g. Doaba)',
-  },
-  {
-    icon: 'fa-solid fa-building-wheat',
-    tile: 'bg-emerald-800 text-emerald-100',
-    title: 'Centre Manager',
-    meta: 'Single Mandi Capacity & Slots',
-  },
-  {
-    icon: 'fa-solid fa-scale-balanced',
-    tile: 'bg-amber-700 text-amber-100',
-    title: 'Centre Operator',
-    meta: 'Counter Queue & Weighment',
-  },
-]
-
-const AUTH_TABS = [
-  { icon: 'fa-solid fa-id-card', label: 'Officer ID / Email' },
-  { icon: 'fa-solid fa-fingerprint', label: 'Jan Parichay (SSO)' },
-  { icon: 'fa-solid fa-key', label: 'Hardware Token (FIPS)' },
-]
-
 export default function Login() {
   const navigate = useNavigate()
   const { login } = useAdminAuth()
-  const [activeTab, setActiveTab] = useState(0)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('national@kisanraw.gov.in')
   const [password, setPassword] = useState('Admin@1234')
@@ -59,84 +25,72 @@ export default function Login() {
   }
 
   return (
-    <div className="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-brand-100 selection:text-brand-900">
-      {/* Top Sovereign Header Bar */}
-      <div>
-        <header className="bg-brand-950 border-b border-brand-800/80 px-6 py-2.5 text-white flex flex-wrap items-center justify-between shadow-sm">
-          <div className="flex items-center space-x-3">
-            <img
-              src={EMBLEM_SRC}
-              alt="KisanRaw Emblem"
-              className="w-9 h-9 rounded shadow-md border border-amber-500/30 object-contain bg-brand-900"
-            />
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-extrabold tracking-wider text-base uppercase text-white font-sans">
-                  KisanRaw Centre Operations
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-300 tracking-normal">
-                National Agriculture Procurement Command & Control Grid • Ministry of Agriculture & Farmers Welfare
-              </p>
-            </div>
+    <div className="bg-slate-100 text-slate-900 min-h-screen flex flex-col antialiased">
+      {/* Header */}
+      <header className="bg-brand-950 border-b border-brand-800/80 px-6 py-3 text-white flex items-center gap-3 shadow-sm">
+        <img
+          src={EMBLEM_SRC}
+          alt="KisanRaw Emblem"
+          className="w-9 h-9 object-contain"
+        />
+        <div>
+          <div className="font-extrabold tracking-wider text-base uppercase text-white">
+            KisanRaw Centre Operations
           </div>
+          <p className="text-[11px] text-slate-300 tracking-normal">
+            National Agriculture Procurement Command &amp; Control Grid &bull; Ministry of Agriculture &amp; Farmers Welfare
+          </p>
+        </div>
+      </header>
 
-          {/* Quick Portal Meta & Language switcher */}
-          
-        </header>
-      </div>
-
-      {/* Main Content Gateway Grid */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-      
-
-        {/* Right Column: Interactive Login & 2FA Gateway Form */}
-        <div className="lg:col-span-6">
+      {/* Main */}
+      <main className="flex-1 flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200/90 overflow-hidden">
-            {/* Gateway Card Header */}
-            <div className="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 px-7 py-5 text-white border-b border-brand-700 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold tracking-tight text-white flex items-center space-x-2">
-                  <span>Secure Official Sign-In</span>
-                </h2>
-              </div>
-              <div className="text-right">
-              </div>
+            {/* Card Header */}
+            <div className="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 px-7 py-5 text-white">
+              <h1 className="text-xl font-bold tracking-tight">Official Sign-In</h1>
+              <p className="text-sm text-slate-300 mt-0.5">Access restricted to authorised personnel only.</p>
             </div>
 
-            {/* Form Body */}
+            {/* Form */}
             <div className="p-6 md:p-8 space-y-5">
-              {/* Step 1: Officer Identification */}
+              {/* Email */}
               <div>
+                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                  Officer ID / Email
+                </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                    <i className="fa-regular fa-envelope"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
                   </span>
                   <input
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-24 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-brand-700 transition"
+                    className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-brand-700 transition"
                     placeholder="e.g. officer.id@gov.in"
                   />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    
-                  </div>
                 </div>
-          
-               
               </div>
 
-              {/* Password Field */}
+              {/* Password */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    Password
+                  </label>
                   <a href="#" onClick={(e) => e.preventDefault()} className="text-xs text-brand-700 font-semibold hover:underline">
                     Forgot Password?
                   </a>
                 </div>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                    <i className="fa-solid fa-key"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
                   </span>
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -146,71 +100,65 @@ export default function Login() {
                     className="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-brand-700 transition"
                   />
                   <button
+                    type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition-colors"
+                    title={showPassword ? 'Hide password' : 'Show password'}
                   >
+                    {showPassword ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" x2="23" y1="1" y2="23"/>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
                   </button>
                 </div>
               </div>
 
-              {/* 2FA & Multi-Factor Section */}
-              <div className="border-t border-slate-200 pt-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center space-x-1.5">
-                    <span>Two-Factor Authentication (Aadhaar / TOTP)</span>
-                  </label>
-                  <span className="text-[11px] text-brand-700 font-medium hover:underline cursor-pointer">
-                    Resend OTP
-                  </span>
-                </div>
-
-                {/* OTP Digit Input Boxes */}
-                <div className="flex items-center justify-between gap-2">
-                  {['7', '4', '9', '2', '6', '8'].map((digit, idx) => (
-                    <input
-                      key={idx}
-                      type="text"
-                      maxLength={1}
-                      defaultValue={digit}
-                      className="w-12 h-12 text-center text-lg font-bold font-mono bg-slate-50 border-2 border-brand-700 text-brand-900 rounded-lg focus:outline-none ring-2 ring-brand-700/20"
-                    />
-                  ))}
-                </div>
-              
-              </div>
-
+              {/* Error */}
               {loginError && (
-                <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700 font-medium">
+                <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700 font-medium flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
+                  </svg>
                   {loginError}
                 </div>
               )}
 
-              {/* Primary Submit Action */}
-              <div className="pt-2">
-                <button
-                  onClick={handleAuthenticate}
-                  disabled={authenticating}
-                  className="w-full bg-brand-900 hover:bg-brand-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-900/25 flex items-center justify-center space-x-2.5 transition duration-150 transform active:scale-[0.99] disabled:opacity-80 disabled:cursor-wait"
-                >
-                 
-                  <span className="tracking-wide text-sm font-semibold uppercase">
-                    {authenticating
-                      ? 'Logging In...'
-                      : 'Login'}
-                  </span>
-                  
-                </button>
-              </div>
+              {/* Submit */}
+              <button
+                onClick={handleAuthenticate}
+                disabled={authenticating}
+                className="w-full bg-brand-900 hover:bg-brand-800 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-brand-900/25 flex items-center justify-center gap-2 transition duration-150 active:scale-[0.99] disabled:opacity-70 disabled:cursor-wait"
+              >
+                {authenticating ? (
+                  <>
+                    <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/>
+                    </svg>
+                    Sign In
+                  </>
+                )}
+              </button>
             </div>
 
-            {/* Card Security Footer */}
-            
+            {/* Footer */}
+            <div className="px-7 py-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500">
+              Authorised access only &bull; All sessions are logged &bull; &copy; Ministry of Agriculture &amp; Farmers Welfare
+            </div>
           </div>
         </div>
       </main>
-
-      {/* Bottom Sovereign Footer */}
-      
     </div>
   )
 }
